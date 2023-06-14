@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const userRouter = require('./routes/users');
 const cardRouter = require('./routes/cards');
-const { login, createUser } = require('./controllers/users');
+const { loginUser, createUser } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 
 const NOT_FOUND = 404;
 
@@ -20,8 +21,10 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post('/signin', login);
+app.post('/signin', loginUser);
 app.post('/signup', createUser);
+
+app.use(auth);
 
 app.use('/users', userRouter);
 app.use('/cards', cardRouter);

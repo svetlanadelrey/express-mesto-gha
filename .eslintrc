@@ -5,6 +5,7 @@
       "error", { "allow": ["_id"] }
     ],
     "linebreak-style": 0,
-    "eol-last": 0
+    "eol-last": 0,
+    "func-names": "off"
   }
 }

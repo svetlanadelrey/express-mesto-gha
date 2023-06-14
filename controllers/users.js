@@ -69,6 +69,24 @@ const loginUser = (req, res) => {
     .catch(() => res.status(UNAUTHORIZED).send({ message: 'Неправильные почта или пароль' }));
 };
 
+const getCurrentUser = (req, res) => {
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        res.status(NOT_FOUND).send({ message: 'Пользователь не найден' });
+      } else {
+        res.status(OK).send(user);
+      }
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(BAD_REQUEST).send({ message: 'Введены некорректные данные' });
+      } else {
+        res.status(SERVER_ERROR).send({ message: 'Ошибка на сервере' });
+      }
+    });
+};
+
 const updateProfile = (req, res) => {
   const { name, about } = req.body;
   User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
@@ -112,6 +130,7 @@ module.exports = {
   getUserById,
   createUser,
   loginUser,
+  getCurrentUser,
   updateProfile,
   updateAvatar,
 };

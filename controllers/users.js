@@ -40,16 +40,16 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new BadRequestError('Введены некорректные данные');
+        return next(new BadRequestError('Введены некорректные данные'));
       }
-      if (err.name === 1100) {
-        throw new ConflictError('Пользователь с такой почтой уже зарегистрирован');
+      if (err.code === 11000) {
+        return next(new ConflictError('Пользователь с такой почтой уже зарегистрирован'));
       }
-    })
-    .catch(next);
+      return next(err);
+    });
 };
 
 const loginUser = (req, res, next) => {
@@ -57,7 +57,7 @@ const loginUser = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
-      res.cookie('access_token', token, { httpOnly: true }).send({ token });
+      res.send({ token });
     })
     .catch(() => {
       throw new UnauthorizedError('Неправильные почта или пароль');
@@ -71,14 +71,14 @@ const getCurrentUser = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       }
-      return res.send(user);
+      res.send(user);
     })
     .catch(next);
 };
 
 const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+  return User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');

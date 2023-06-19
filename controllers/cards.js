@@ -57,8 +57,8 @@ const setLike = (req, res, next) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Введены некорректные данные');
       }
-    })
-    .catch(next);
+      next(err);
+    });
 };
 
 const removeLike = (req, res, next) => {
@@ -73,8 +73,8 @@ const removeLike = (req, res, next) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Введены некорректные данные');
       }
-    })
-    .catch(next);
+      next(err);
+    });
 };
 
 module.exports = {

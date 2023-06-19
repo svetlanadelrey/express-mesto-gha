@@ -4,7 +4,6 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-request-err');
 const ConflictError = require('../errors/conflict-err');
-const UnauthorizedError = require('../errors/unauthorized-err');
 
 const getUser = (req, res, next) => {
   User.find({})
@@ -40,16 +39,21 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.send(user))
+    .then(() => res.send({
+      name,
+      about,
+      avatar,
+      email,
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        return next(new BadRequestError('Введены некорректные данные'));
+        throw new BadRequestError('Введены некорректные данные');
       }
       if (err.code === 11000) {
-        return next(new ConflictError('Пользователь с такой почтой уже зарегистрирован'));
+        throw new ConflictError('Пользователь с такой почтой уже зарегистрирован');
       }
-      return next(err);
-    });
+    })
+    .catch(next);
 };
 
 const loginUser = (req, res, next) => {
@@ -58,9 +62,6 @@ const loginUser = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
       res.send({ token });
-    })
-    .catch(() => {
-      throw new UnauthorizedError('Неправильные почта или пароль');
     })
     .catch(next);
 };

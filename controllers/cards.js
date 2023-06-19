@@ -41,42 +41,40 @@ const deleteCard = (req, res, next) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Введены некорректные данные');
       }
-    })
-    .catch(next);
+      next(err);
+    });
 };
 
 const setLike = (req, res, next) => {
-  const { cardId } = req.params;
-  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка не найдена');
       }
-      return res.send(card);
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Введены некорректные данные');
       }
-    })
-    .catch(next);
+      next(err);
+    });
 };
 
 const removeLike = (req, res, next) => {
-  const { cardId } = req.params;
-  Card.findByIdAndUpdate(cardId, { $pull: { likes: req.user._id } }, { new: true })
+  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Карточка не найдена');
       }
-      return res.send(card);
+      res.send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Введены некорректные данные');
       }
-    })
-    .catch(next);
+      next(err);
+    });
 };
 
 module.exports = {

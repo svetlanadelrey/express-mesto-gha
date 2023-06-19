@@ -41,8 +41,8 @@ const deleteCard = (req, res, next) => {
       if (err.name === 'CastError') {
         throw new BadRequestError('Введены некорректные данные');
       }
-    })
-    .catch(next);
+      next(err);
+    });
 };
 
 const setLike = (req, res, next) => {

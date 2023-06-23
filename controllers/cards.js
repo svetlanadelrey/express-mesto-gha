@@ -41,8 +41,9 @@ const deleteCard = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         next(new BadRequestError('Введены некорректные данные'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -57,8 +58,9 @@ const setLike = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         next(new BadRequestError('Введены некорректные данные'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
@@ -73,8 +75,9 @@ const removeLike = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
         next(new BadRequestError('Введены некорректные данные'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 

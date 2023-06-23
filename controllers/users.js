@@ -52,11 +52,11 @@ const createUser = (req, res, next) => {
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError('Введены некорректные данные'));
-      }
-      if (err.code === MONGO_DUPLICATE_ERRORE_CODE) {
+      } else if (err.code === MONGO_DUPLICATE_ERRORE_CODE) {
         next(new ConflictError('Пользователь с такой почтой уже зарегистрирован'));
+      } else {
+        next(err);
       }
-      next(err);
     });
 };
 
